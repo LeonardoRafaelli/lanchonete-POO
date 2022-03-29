@@ -3,20 +3,15 @@ import java.util.Scanner;
 
 public class Main {
 
-    static private final Scanner sc = new Scanner(System.in);
-    static private final ArrayList<Lanche> listaLanches = new ArrayList<>();
-    static private final ArrayList<Bebida> listaBebidas = new ArrayList<>();
-    static private final ArrayList<Outro> listaOutros = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+    static ArrayList<Lanche> listaLanches = new ArrayList<>();
+    static ArrayList<Bebida> listaBebidas = new ArrayList<>();
+    static ArrayList<Outro> listaOutros = new ArrayList<>();
 
     public static void main(String[] args) {
-        Pedido lanche = new Lanche(5, "X-Egg", 25, 2);
-        System.out.println(lanche);
+        addLanchesEstaticos();
+        menu();
     }
-//    public static void main(String[] args) {
-//        addLanchesEstaticos();
-//        menu();
-//        Lanche lanche = new Lanche(5, "X-Egg", 25, 2);
-//    }
 
     private static void menu(){
         int opcao = selecionaOpcao();

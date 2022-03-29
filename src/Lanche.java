@@ -16,6 +16,6 @@ public class Lanche extends Pedido{
 
     @Override
     public String toString() {
-        return super.toString() + "\nPeso      --> " + getPeso() + " Kg\n----------";
+        return super.toString() + "\nPeso      --> " + peso + " Kg\n----------";
     }
 }
