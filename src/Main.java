@@ -1,3 +1,5 @@
+import Exceptions.*;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -10,11 +12,19 @@ public class Main {
 
     public static void main(String[] args) {
         addLanchesEstaticos();
-        menu();
+
+        try{
+            menu();
+        } catch(RuntimeException e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    private static void menu(){
+    private static void menu() throws RuntimeException {
         int opcao = selecionaOpcao();
+        if(opcao < 1 || opcao > 5){
+            throw new OpcaoInvalidaException();
+        }
         switch (opcao){
             case 1 -> cadastrar();
             case 2 -> listar();
@@ -28,7 +38,7 @@ public class Main {
         menu();
     }
 
-    private static void editar(){
+    private static void editar()  throws RuntimeException {
         int tipo = selecionaTipo("---EDITAR PREÇO---");
         int i = verificaCodigo(tipo);
 
@@ -108,7 +118,7 @@ public class Main {
         }
     }
 
-    private static void remover(){
+    private static void remover() throws RuntimeException {
         int tipo = selecionaTipo("---REMOVER---");
         int i = verificaCodigo(tipo);
         int escolha = 1;
@@ -164,12 +174,12 @@ public class Main {
         }
     }
 
-    private static int verificaCodigo(int tipo){
+    private static int verificaCodigo(int tipo) throws RuntimeException{
         int i = 0;
         int cod;
         do {
             if(i == -1){
-                System.out.println("Código inexistente!");
+                throw new ProdutoInvalidoException();
             }
             switch (tipo){
                 case 1 -> System.out.print("Digite o código do lanche: ");
@@ -246,7 +256,7 @@ public class Main {
         }
     }
 
-    private static void cadastrar(){
+    private static void cadastrar() throws RuntimeException{
         int tipo = selecionaTipo("---CADASTRAR---");
         switch (tipo){
             case 1 -> {
@@ -271,7 +281,7 @@ public class Main {
                         System.out.println("O lanche não foi adicionado!");
                     }
                 } else {
-                    System.out.println("O lanche ja foi adicionado!");
+                    throw new ProdutoExistenteException(tipo);
                 }
             }
             case 2 -> {
@@ -296,7 +306,7 @@ public class Main {
                         System.out.println("A bebida não foi adicionada!");
                     }
                 } else {
-                    System.out.println("A bebida ja foi adicionada!");
+                    throw new ProdutoExistenteException(tipo);
                 }
             }
             case 3 -> {
@@ -321,7 +331,7 @@ public class Main {
                         System.out.println("Outro não foi adicionado!");
                     }
                 } else {
-                    System.out.println("Outro ja foi adicionado!");
+                    throw new ProdutoExistenteException(tipo);
                 }
             }
         }
@@ -388,7 +398,7 @@ public class Main {
         return true;
     }
 
-    private static Pedido coletaDadosPedido(){
+    private static Pedido coletaDadosPedido() throws RuntimeException{
         System.out.println("\nInsira os seguintes dados: ");
         System.out.print("Código: ");
         int codigo = sc.nextInt();
@@ -396,29 +406,44 @@ public class Main {
         String descricao = sc.next();
         System.out.print("Preço (R$): ");
         double preco = sc.nextDouble();
+        if(preco < 0 || preco > 200){
+            throw new PrecoInvalidoException();
+        }
         return new Pedido(codigo, descricao, preco);
     }
 
-    private static Lanche coletaDadosLanche(Pedido pedido){
+    private static Lanche coletaDadosLanche(Pedido pedido) throws RuntimeException{
         System.out.print("Peso (Kg): ");
         double peso = sc.nextInt();
+        if(peso < 0 || peso > 10){
+            throw new PesoInvalidoException();
+        }
         return new Lanche(pedido.getCodigo(), pedido.getDescricao(), pedido.getPreco(), peso);
     }
 
-    private static Bebida coletaDadosBebida(Pedido pedido){
+    private static Bebida coletaDadosBebida(Pedido pedido) throws RuntimeException{
         Bebida bebida = new Bebida();
         System.out.print("Litros: ");
-        bebida.setVolume(sc.nextDouble());
+        double litros = sc.nextDouble();
+        if(litros < 0 || litros > 10){
+            throw new VolumeInvalidoException();
+        }
+        bebida.setVolume(litros);
         bebida.setCodigo(pedido.getCodigo());
         bebida.setDescricao(pedido.getDescricao());
         bebida.setPreco(pedido.getPreco());
         return bebida;
     }
 
-    private static Outro coletaDadosOutro(Pedido pedido){
+    private static Outro coletaDadosOutro(Pedido pedido) throws RuntimeException{
         Outro outro = new Outro();
         System.out.print("Tamanho: ");
-        outro.setTamanho(sc.next());
+        String tamanho = sc.next();
+        if(tamanho.equals("P") || tamanho.equals("M") || tamanho.equals("G")){
+            outro.setTamanho(tamanho);
+        } else {
+            throw new TamanhoInvalidoException();
+        }
         outro.setCodigo(pedido.getCodigo());
         outro.setDescricao(pedido.getDescricao());
         outro.setPreco(pedido.getPreco());
